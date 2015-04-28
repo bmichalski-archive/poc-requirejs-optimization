@@ -1,8 +1,7 @@
 /*global require */
-var requirejs = require;
 
 (function () {
-  var require = requirejs('requirejs');
+  var requirejs = require('requirejs');
 
-  require(['test']);
+  requirejs(['test']);
 }());
