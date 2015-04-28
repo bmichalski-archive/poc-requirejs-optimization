@@ -86,12 +86,23 @@
     }
   });
   
-  console.log(fsExtra.remove);
+  var sys = require('sys')
   
-  fsExtra.remove(buildDirectory, function (err) {
-    if (err !== null) {
-      console.log(err);
-    } else {
+  var exec = require('child_process').exec;
+  
+  //To prevent /* deletion.
+  if (buildDirectory === '' || buildDirectory === null || buildDirectory === undefined) {
+    throw new Error('Missing build directory.');
+  }
+  
+  var child = exec('rm -rf ' + buildDirectory + '/*', function (error, stdout, stderr) {
+    
+  });
+  
+//  fsExtra.remove(buildDirectory, function (err) {
+//    if (err !== null) {
+//      console.log(err);
+//    } else {
 //      onDirRecurseAbsolute(buildDirectory, function (file) {
 //        var result = UglifyJS.minify(file);
 //
@@ -101,6 +112,6 @@
 //          }
 //        });
 //      });
-    }
-  });
+//    }
+//  });
 }());
