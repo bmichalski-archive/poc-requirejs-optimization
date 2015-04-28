@@ -1,1 +1,0 @@
-define("deps/dep3",[],function(){console.log("dep3")}),define("deps/dep2",["deps/dep3"],function(){console.log("dep2")});
