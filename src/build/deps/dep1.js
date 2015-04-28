@@ -1,0 +1,1 @@
+define("deps/dep1",[],function(){console.log("dep1")});
