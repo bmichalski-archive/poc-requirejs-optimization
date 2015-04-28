@@ -1,3 +1,5 @@
-var require = require('requirejs');
+(function () {
+  var require = require('requirejs');
 
-require(['test']);
+  require(['test']);
+}());
