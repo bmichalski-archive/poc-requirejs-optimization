@@ -3,17 +3,19 @@
 
   var requirejs = require('requirejs');
 
-  var config = {
-    baseUrl: '',
-    name: 'test',
-    out: __dirname + '/build/built.js'
-  };
-
   var fs = require('fs');
   
   var fsExtra = require('fs-extra');
+  
+  var UglifyJS = require('uglify-js');
+  
+  var buildDirectory = __dirname + '/build';
+  
+  var sourcesDirectory = __dirname + '/scripts';
+  
+  var dontOptimizeWithRequire = ['run'];
 
-  function onDirRecurse(dir, doWithFile, initDir) {
+  function onDirRecurseAbsolute(dir, doWithFile, initDir) {
     var visitedDir = {};
     
     if (initDir === undefined) {
@@ -39,14 +41,12 @@
 
                     if (visitedDir[realpath] === undefined) {
                       visitedDir[realpath] = true;
-                      onDirRecurse(filepath, doWithFile, initDir);
+                      onDirRecurseAbsolute(filepath, doWithFile, initDir);
                     }
                   }
                 });
               } else {
-                var relativePath = filepath.substr(initDir.length + 1);
-                
-                doWithFile(relativePath);
+                doWithFile(filepath, initDir);
               }
             }
           });
@@ -55,15 +55,22 @@
     });
   }
   
-  var ignore = ['run'];
+  
+  
+  function onDirRecurseRelative(dir, doWithFile, initDir) {
+    onDirRecurseAbsolute(dir, function (filepath, initDir) {
+      var relativePath = filepath.substr(initDir.length + 1);
+      doWithFile(relativePath);
+    }, initDir);
+  }
 
-  onDirRecurse(__dirname + '/scripts', function (relativeFilePath) {
+  onDirRecurseRelative(sourcesDirectory, function (relativeFilePath) {
     var moduleName = relativeFilePath.substr(0, relativeFilePath.length - 3);
-    var out = __dirname + '/build/' + moduleName + '.js';
+    var out = buildDirectory + '/' + moduleName + '.js';
     
-    if (ignore.indexOf(moduleName) === -1) {
+    if (dontOptimizeWithRequire.indexOf(moduleName) === -1) {
       requirejs.optimize({
-        baseUrl: __dirname + '/scripts',
+        baseUrl: sourcesDirectory,
         name: moduleName,
         out: out,
       }, function (buildResponse) {
@@ -71,11 +78,29 @@
           console.log(err);
       });
     } else {
-      fsExtra.copy(__dirname + '/scripts/' + relativeFilePath, out, function (err) {
+      fsExtra.copy(sourcesDirectory + '/' + relativeFilePath, out, function (err) {
         if (err !== null) {
           console.log(err);
         }
       });
+    }
+  });
+  
+  console.log(fsExtra.remove);
+  
+  fsExtra.remove(buildDirectory, function (err) {
+    if (err !== null) {
+      console.log(err);
+    } else {
+//      onDirRecurseAbsolute(buildDirectory, function (file) {
+//        var result = UglifyJS.minify(file);
+//
+//        fsExtra.outputFile(file, result.code, function (err) {
+//          if (err !== null) {
+//            console.log(err);
+//          }
+//        });
+//      });
     }
   });
 }());
