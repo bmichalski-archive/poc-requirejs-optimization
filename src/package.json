@@ -1,5 +1,6 @@
 {
     "dependencies": {
-        "requirejs": "~2.1"
+        "requirejs": "~2.1",
+        "fs-extra": "~0.18"
     }
 }

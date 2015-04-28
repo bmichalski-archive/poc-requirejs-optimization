@@ -10,6 +10,8 @@
   };
 
   var fs = require('fs');
+  
+  var fsExtra = require('fs-extra');
 
   function onDirRecurse(dir, doWithFile, initDir) {
     var visitedDir = {};
@@ -52,17 +54,28 @@
       }
     });
   }
+  
+  var ignore = ['run'];
 
   onDirRecurse(__dirname + '/scripts', function (relativeFilePath) {
     var moduleName = relativeFilePath.substr(0, relativeFilePath.length - 3);
+    var out = __dirname + '/build/' + moduleName + '.js';
     
-    requirejs.optimize({
-      baseUrl: __dirname + '/scripts',
-      name: moduleName,
-      out: __dirname + '/build/' + moduleName + '.js'
-    }, function (buildResponse) {
-    }, function(err) {
-        console.log(err);
-    });
+    if (ignore.indexOf(moduleName) === -1) {
+      requirejs.optimize({
+        baseUrl: __dirname + '/scripts',
+        name: moduleName,
+        out: out,
+      }, function (buildResponse) {
+      }, function(err) {
+          console.log(err);
+      });
+    } else {
+      fsExtra.copy(__dirname + '/scripts/' + relativeFilePath, out, function (err) {
+        if (err !== null) {
+          console.log(err);
+        }
+      });
+    }
   });
 }());

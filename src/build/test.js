@@ -1,1 +1,1 @@
-define("deps/dep1",[],function(){console.log("dep1")}),define("deps/dep3",[],function(){console.log("dep3")}),define("deps/dep2",["deps/dep3"],function(){console.log("dep2")}),define("test",["deps/dep1","deps/dep2"],function(){require(["dep/dep4"])});
+define("deps/dep1",[],function(){console.log("dep1")}),define("deps/dep3",[],function(){console.log("dep3")}),define("deps/dep2",["deps/dep3"],function(){console.log("dep2")}),define("test",["deps/dep1","deps/dep2"],function(){require(["deps/dep4"])});
