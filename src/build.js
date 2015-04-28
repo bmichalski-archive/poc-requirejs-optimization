@@ -121,10 +121,9 @@
             handleError(err);
           }
           
-          var result = UglifyJS.minify(out);
-          
-          console.log(result.code);
-          console.log(out);
+          var result = UglifyJS.minify(out, {
+            define: ['require']
+          });
           
           fsExtra.outputFile(out, result.code, function (err) {
             if (err !== null) {
